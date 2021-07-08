@@ -30,6 +30,17 @@ resource "aws_subnet" "subnet_milo" {
     }
 }
 
+resource "aws_subnet" "subnet_milo_pv" {
+    vpc_id = aws_vpc.milo_vpc.id
+    cidr_block = "10.0.1.0/24"
+    map_public_ip_on_launch = true
+    availability_zone = "us-east-1b"
+
+    tags= {
+        Name = "Milo Private Subnet Terraform"
+    }
+}
+
 /*
 Se crea un internet gateway llamdo ig_milo dentro de la nube privada milo_vpc
 */
@@ -63,5 +74,10 @@ Es necesaria la asociación para que la subred reconozca y aplique el enrutamien
 */ 
 resource "aws_route_table_association" "rt_subnet_milo" {
     subnet_id = aws_subnet.subnet_milo.id
+    route_table_id = aws_route_table.rt_milo.id
+}
+
+resource "aws_route_table_association" "rt_subnet_milo_pv" {
+    subnet_id = aws_subnet.subnet_milo_pv.id
     route_table_id = aws_route_table.rt_milo.id
 }
